@@ -1,14 +1,27 @@
 import streamlit as st
 import pandas as pd
+from st_pages import Page, show_pages, Section, add_page_title
+
 
 # TODO: add validated column, which takes three values: np.nan for not-visited, 0 for bad, 1 for good
 # TODO: need to be able to keep the state of the counters i.e. need to update the actual dataframe
+
+# add_page_title()
+
+show_pages(
+    [
+        Page("main.py", "Benchmark Viewer", ":book:"),
+        # Page("pages/graphs.py", "Dependency Viewer", ":mag:"),
+        # Section(name="Developer Tools", icon=":open_file_folder:"),
+        Page("pages/validation.py", "Validation", ":pencil:"),
+    ]
+)
 
 st.sidebar.title("Toolbar")
 tasks = ['test', 'ambiguity']#, 'endowment']
 selected_task = st.sidebar.selectbox("Select a Task", tasks)
 
-# @st.cache_data
+@st.cache_data
 def load_df(filename):
     return pd.read_pickle(f'data/{filename}.pkl')
 
