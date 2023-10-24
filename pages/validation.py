@@ -18,7 +18,7 @@ show_pages(
 )
 
 st.sidebar.title("Toolbar")
-tasks = ['test', 'ambiguity']#, 'endowment']
+tasks = ['sunk_cost', 'ambiguity']#, 'endowment']
 selected_task = st.sidebar.selectbox("Select a Task", tasks)
 
 @st.cache_data
@@ -33,11 +33,13 @@ for task in tasks:
 
 # Difficulty Selection
 domains = st.session_state[f'{selected_task}_df']['domain'].unique()
+task_types = st.session_state[f'{selected_task}_df']['type'].unique()
 selected_domain = st.sidebar.selectbox("Select a Domain", domains)
-if st.session_state[f'{selected_task}_df']['difficulty'].min() != st.session_state[f'{selected_task}_df']['difficulty'].max():
-    slider_difficulty = st.sidebar.slider("Select a Difficulty", min_value=int(st.session_state[f'{selected_task}_df']['difficulty'].min()), max_value=int(st.session_state[f'{selected_task}_df']['difficulty'].max()), value=int(st.session_state[f'{selected_task}_df']['difficulty'].median()))
+selected_type = st.sidebar.selectbox("Select a Type", domains)
+if st.session_state[f'{selected_task}_df']['difficulty_level'].min() != st.session_state[f'{selected_task}_df']['difficulty_level'].max():
+    slider_difficulty = st.sidebar.slider("Select a Difficulty", min_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].min()), max_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].max()), value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].median()))
 else:
-    st.sidebar.write("Difficulty: ", st.session_state[f'{selected_task}_df']['difficulty'].max())
+    st.sidebar.write("Difficulty: ", st.session_state[f'{selected_task}_df']['difficulty_level'].max())
 
 
 
@@ -53,9 +55,9 @@ df_shuffled = None
 current_row_index = 0
 
 # Function to initialize and shuffle the DataFrame
-def initialize_and_shuffle_dataframe(domain):
+def initialize_and_shuffle_dataframe(domain, task_type):
     global df_shuffled
-    df_shuffled = st.session_state[f'{selected_task}_df'].loc[(st.session_state[f'{selected_task}_df']['domain'] == domain) & (st.session_state[f'{selected_task}_df']['validated'].isnull())].sample(frac=1)
+    df_shuffled = st.session_state[f'{selected_task}_df'].loc[(st.session_state[f'{selected_task}_df']['domain'] == domain) & (st.session_state[f'{selected_task}_df']['validated'].isnull()) & (st.session_state[f'{selected_task}_df']['type'] == task_type)].sample(frac=1)
     
 
 
@@ -68,7 +70,7 @@ def get_next_row():
         return {'status': 'done'}
     return next_row
 
-initialize_and_shuffle_dataframe(selected_domain)
+initialize_and_shuffle_dataframe(selected_domain, selected_type)
 
 def clean_text(string):
     string = string.replace('$', '\$')

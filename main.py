@@ -45,15 +45,13 @@ st.title("Rationality Benchmark")
 st.sidebar.header("Filters")
 
 categories = {
-    "Numerical Foundations": [
+    "Foundations": [
         'Arithmetic', 
         'Probability', 
         'Optimization', 
-    ], 
-    "Logical Foundations": [
-        'Formal Logic', 
+        'Logic', 
         'Theory of Mind'
-    ],
+    ], 
     "Preferences": [
         'Utility Theory', 
         'Reference Independent Decision-Making'
@@ -79,8 +77,6 @@ st.sidebar.download_button(label="Download Test", data="", file_name='benchmark_
 
 tab_class = st.tabs(categories)
 
-
-difficulty_values = {}
 
 for tab_class, category_texts in zip(tab_class, categories):
     for category_text in categories[category_texts]:
