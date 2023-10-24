@@ -35,7 +35,7 @@ for task in tasks:
 domains = st.session_state[f'{selected_task}_df']['domain'].unique()
 task_types = st.session_state[f'{selected_task}_df']['type'].unique()
 selected_domain = st.sidebar.selectbox("Select a Domain", domains)
-selected_type = st.sidebar.selectbox("Select a Type", domains)
+selected_type = st.sidebar.selectbox("Select a Type", task_types)
 if st.session_state[f'{selected_task}_df']['difficulty_level'].min() != st.session_state[f'{selected_task}_df']['difficulty_level'].max():
     slider_difficulty = st.sidebar.slider("Select a Difficulty", min_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].min()), max_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].max()), value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].median()))
 else:
@@ -43,7 +43,7 @@ else:
 
 
 
-st.title(f"Validate {selected_task.split('/')[-1].capitalize()} Questions")
+st.title(f"Validate {' '.join(selected_task.split('/')[-1].capitalize().split('_'))} Questions")
 
 # Initialize counters
 st.session_state.good_counter = st.session_state[f'{selected_task}_df'][st.session_state[f'{selected_task}_df']['domain'] == selected_domain]['validated'].sum()
@@ -90,9 +90,15 @@ def update_counters_and_display():
             question = clean_text(current_row['questions'])
             st.info(question)
         except AttributeError:
-            questions = [clean_text(question) for question in current_row['questions']]
-            options = [[clean_text(options[0]), clean_text(options[1])] for options in current_row['options']]
-            st.info(questions[0] + '  \n' + f'A. {options[0][0]}' + '  \n' f'B. {options[0][1]}' + '  \n  \n' + questions[1] + '  \n' + f'C. {options[1][0]}' + '  \n' f'D. {options[1][1]}')
+            # TODO: this is currently hard-coded for test questions that have two questions and two options for each.
+            try:
+                questions = [clean_text(question) for question in current_row['questions']]
+                options = [[clean_text(options[0]), clean_text(options[1])] for options in current_row['options']]
+                st.info(questions[0] + '  \n' + f'A. {options[0][0]}' + '  \n' f'B. {options[0][1]}' + '  \n  \n' + questions[1] + '  \n' + f'C. {options[1][0]}' + '  \n' f'D. {options[1][1]}')
+            except IndexError:
+                questions = [clean_text(question) for question in current_row['questions']]
+                options = [[clean_text(options[0]), clean_text(options[1])] for options in current_row['options']]
+                st.info(questions[0] + '  \n' + f'A. {options[0][0]}' + '  \n' f'B. {options[0][1]}')
         st.text("")
         st.text("")
         button_cols = st.columns(5)
@@ -117,12 +123,6 @@ def update_counters_and_display():
         if button_cols[-1].button("Save and Exit", type='primary'):
             # save_counters()
             st.stop()
-
-# Function to save counters to a file
-# def save_counters():
-#     with open("counters.txt", "w") as file:
-#         file.write(f"Yes Counter: {yes_counter}\n")
-#         file.write(f"No Counter: {no_counter}")
 
 
 # Initial random row
