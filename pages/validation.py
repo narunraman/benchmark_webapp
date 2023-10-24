@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 from st_pages import Page, show_pages, Section, add_page_title
 from string import ascii_uppercase
 LETTERS = list(ascii_uppercase)
@@ -19,12 +20,12 @@ show_pages(
 )
 
 st.sidebar.title("Toolbar")
-tasks = ['sunk_cost', 'ambiguity']#, 'endowment']
-selected_task = st.sidebar.selectbox("Select a Task", tasks)
+tasks = {' '.join([elm.capitalize() for elm in task.replace('.pkl', '').split('_')]): task for task in os.listdir('data/validate')} #['sunk_cost', 'ambigiuty', 'endowment']
+selected_task = st.sidebar.selectbox("Select a Task", tasks.keys())
 
 @st.cache_data
-def load_df(filename):
-    return pd.read_pickle(f'data/{filename}.pkl')
+def load_df(task_name):
+    return pd.read_pickle(f'data/validate/{tasks[task_name]}')
 
 for task in tasks:
     if f'{task}_df' not in st.session_state:
@@ -78,8 +79,9 @@ def clean_text(string):
     string = string.replace('{}', '[BLANK]')
     return string
 
-def get_option_number(i, j):
-    return int(str(i)+str(j), 2)
+# NOTE: this assumes the number of options per question is the same. 
+def get_option_number(i, j, num_options):
+    return (i * num_options) + j
 
 # Function to update counters and display new text
 def update_counters_and_display():
@@ -95,8 +97,8 @@ def update_counters_and_display():
             st.info(question)
         except AttributeError:
             questions = [clean_text(question) for question in current_row['questions']]
-            options_lst = [[clean_text(options[0]), clean_text(options[1])] for options in current_row['options']]
-            st.info('  \n  \n'.join([question + '  \n' + '  \n'.join([f'{LETTERS[get_option_number(i, j)]}. {option}' for j, option in enumerate(options)]) for i, (question, options) in enumerate(zip(questions, options_lst))]))
+            options_lst = [[clean_text(option) for option in options] for options in current_row['options']]
+            st.info('  \n  \n'.join([question + '  \n' + '  \n'.join([f'{LETTERS[get_option_number(i, j, len(options))]}. {option}' for j, option in enumerate(options)]) for i, (question, options) in enumerate(zip(questions, options_lst))]))
         st.text("")
         st.text("")
         button_cols = st.columns(5)
