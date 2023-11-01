@@ -21,7 +21,8 @@ show_pages(
 )
 
 st.sidebar.title("Toolbar")
-tasks = {' '.join([elm.capitalize() for elm in task.replace('.pkl', '').split('_')]): task for task in os.listdir('data/validate')} #['sunk_cost', 'ambigiuty', 'endowment']
+# Get all files in the validate directory as values and the prettification as keys
+tasks = {' '.join([elm.capitalize() for elm in task.replace('.pkl', '').split('_')]): task for task in os.listdir('data/validate')}
 selected_task = st.sidebar.selectbox("Select a Task", tasks.keys())
 
 @st.cache_data
@@ -32,11 +33,15 @@ for task in tasks:
     if f'{task}_df' not in st.session_state:
         st.session_state[f'{task}_df'] = load_df(task)
 
-# Difficulty Selection
+
+
+# Domain Selection
 domains = st.session_state[f'{selected_task}_df']['domain'].unique()
-task_types = st.session_state[f'{selected_task}_df']['type'].unique()
 selected_domain = st.sidebar.selectbox("Select a Domain", domains)
+# Type Selection
+task_types = st.session_state[f'{selected_task}_df']['type'].unique()
 selected_type = st.sidebar.selectbox("Select a Type", task_types)
+# Difficulty Selection
 if st.session_state[f'{selected_task}_df']['difficulty_level'].min() != st.session_state[f'{selected_task}_df']['difficulty_level'].max():
     slider_difficulty = st.sidebar.slider("Select a Difficulty", min_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].min()), max_value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].max()), value=int(st.session_state[f'{selected_task}_df']['difficulty_level'].median()))
 else:
@@ -94,7 +99,8 @@ def update_counters_and_display():
     current_row,curr_index = get_next_row()
     if current_row.get('status') != 'done':
         st.write('Requirements')
-        st.warning('- '+'  \n- '.join(current_row['description']))# '- Hello  \n - Goodbye')
+        # newlines only work if preceded by double spaces.
+        st.warning('- '+'  \n- '.join(current_row['description']))
         st.write("Current Text:")
         try:
             questions = [clean_text(question) for question in current_row['questions']]

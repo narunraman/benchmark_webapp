@@ -58,10 +58,11 @@ categories = {
     ], 
     "Decision Making Under Uncertainty": [
         'Expected Utility Theory', 
-        'Judgements Under Limited Data'
+        'Risk Assessment'
     ], 
     "Decision Making in the Presence of Other Agents": [
-        'Game Theory'
+        'Single-Round Game Theory',
+        'Multi-Round Game Theory',
     ]
 }
 
