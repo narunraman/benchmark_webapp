@@ -92,7 +92,6 @@ st.sidebar.download_button(label="Download Test", data="", file_name='benchmark_
 #     baselines = ['GPT-4', 'Best-in-Class Model']
 #     st.session_state['baseline'] = st.sidebar.selectbox('Select a Baseline:', baselines)
 
-
 for category_text in categories[st.session_state.category]:
     with st.expander(category_text):
         description_grid = grid([0.2, 0.6], 1, vertical_align='bottom')
@@ -112,9 +111,11 @@ for category_text in categories[st.session_state.category]:
                 <details>
                 <summary>{row['Tasks'][row['Difficulties'].index(diff)]}
                 </summary>
-                <p style='font-family:menlo;font-size:70%;white-space:pre-wrap;background-color:#262731;padding:7px;border-radius:7px;width:425px;'>Example Question:\n{row['questions'][row['Difficulties'].index(diff)]}</p>
+                <p style='font-family:menlo;font-size:70%;white-space:pre-wrap;background-color:#262731;padding:7px;border-radius:7px;width:425px;'><span style="color: #F9EA9A"><b>Example Question:</b></span>\n{row['questions'][row['Difficulties'].index(diff)]}</p>
                 </details>
             '''
+
+
             description_grid.markdown(html, unsafe_allow_html=True)
             
             if counter < len(st.session_state.df.groupby('Category').get_group(category_text)) - 1:
