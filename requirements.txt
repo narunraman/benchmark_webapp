@@ -5,3 +5,4 @@ streamlit
 graphviz
 st_pages
 streamlit_antd_components
+seaborn
