@@ -9,13 +9,13 @@ import altair as alt
 import re
 from textwrap import wrap
 import streamlit_antd_components as sac
-from st_pages import Page, show_pages, add_page_title, Section
-from streamlit_extras.grid import grid
-from streamlit_elements import nivo
-from streamlit_elements import elements, mui, html, dashboard
-from streamlit_extras.tags import tagger_component
-from streamlit_extras.switch_page_button import switch_page
-from annotated_text import annotated_text, annotation
+# from st_pages import Page, show_pages, add_page_title, Section
+# from streamlit_extras.grid import grid
+# from streamlit_elements import nivo
+# from streamlit_elements import elements, mui, html, dashboard
+# from streamlit_extras.tags import tagger_component
+# from streamlit_extras.switch_page_button import switch_page
+# from annotated_text import annotated_text, annotation
 
 st.set_page_config(
     page_title="REASON Benchmark Scores",
