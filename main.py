@@ -12,14 +12,14 @@ from annotated_text import annotated_text, annotation
 
 # def example_one():
 
-pages = st.source_util.get_pages('main.py')
-new_page_names = {
-    'results': '📈 REASON Scores',
-}
+# pages = st.source_util.get_pages('main.py')
+# new_page_names = {
+#     'results': '📈 REASON Scores',
+# }
 
-for key, page in pages.items():
-  if page['page_name'] in new_page_names:
-    page['page_name'] = new_page_names[page['page_name']]
+# for key, page in pages.items():
+#   if page['page_name'] in new_page_names:
+#     page['page_name'] = new_page_names[page['page_name']]
 
 st.set_page_config(
     page_title="REASON Benchmark",
