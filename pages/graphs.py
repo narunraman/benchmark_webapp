@@ -12,14 +12,14 @@ if 'df' not in st.session_state:
     st.session_state.df = load_data('all_tasks')
 
 
-show_pages(
-    [
-        Page("main.py", "Benchmark Viewer", ":book:"),
-        Page("pages/graphs.py", "Dependency Viewer", ":mag:"),
-        # Section(name="Developer Tools", icon=":file_folder:"),
-        Page("pages/validation.py", "Validation", ":pencil:"),
-    ]
-)
+# show_pages(
+#     [
+#         Page("main.py", "Benchmark Viewer", ":book:"),
+#         Page("pages/graphs.py", "Dependency Viewer", ":mag:"),
+#         # Section(name="Developer Tools", icon=":file_folder:"),
+#         Page("pages/validation.py", "Validation", ":pencil:"),
+#     ]
+# )
 
 # categories = {
 #     "Foundations": [

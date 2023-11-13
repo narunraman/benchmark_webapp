@@ -11,14 +11,19 @@ LETTERS = list(ascii_uppercase)
 
 # add_page_title()
 
-show_pages(
-    [
-        Page("main.py", "Benchmark Viewer", ":book:"),
-        # Page("pages/graphs.py", "Dependency Viewer", ":mag:"),
-        # Section(name="Developer Tools", icon=":open_file_folder:"),
-        Page("pages/validation.py", "Validation", ":pencil:"),
-    ]
+st.set_page_config(
+        page_title="Validation",
+        page_icon=":pencil:",
 )
+
+# show_pages(
+#     [
+#         Page("main.py", "Benchmark Viewer", ":book:"),
+#         # Page("pages/graphs.py", "Dependency Viewer", ":mag:"),
+#         # Section(name="Developer Tools", icon=":open_file_folder:"),
+#         Page("pages/validation.py", "Validation", ":pencil:"),
+#     ]
+# )
 
 st.sidebar.title("Toolbar")
 # Get all files in the validate directory as values and the prettification as keys
