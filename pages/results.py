@@ -14,8 +14,6 @@ from streamlit_extras.grid import grid
 from streamlit_elements import nivo
 from streamlit_elements import elements, mui, html, dashboard
 from streamlit_extras.tags import tagger_component
-import plotly.figure_factory as ff
-import plotly.express as px
 from streamlit_extras.switch_page_button import switch_page
 from annotated_text import annotated_text, annotation
 
