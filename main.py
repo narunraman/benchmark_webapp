@@ -14,7 +14,6 @@ from annotated_text import annotated_text, annotation
 
 pages = st.source_util.get_pages('main.py')
 new_page_names = {
-    'main': '📖 REASON Benchmark',
     'results': '📈 REASON Scores',
 }
 
