@@ -8,7 +8,6 @@ import seaborn as sns
 import altair as alt
 import re
 from textwrap import wrap
-from vega_datasets import data
 import streamlit_antd_components as sac
 from st_pages import Page, show_pages, add_page_title, Section
 from streamlit_extras.grid import grid
