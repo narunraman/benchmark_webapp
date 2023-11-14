@@ -2,13 +2,15 @@ import streamlit as st
 import random
 import os
 import pandas as pd
+import uuid
 import streamlit_antd_components as sac
-from st_pages import Page, show_pages, add_page_title, Section
 from streamlit_extras.grid import grid
-from streamlit_extras.tags import tagger_component
-import streamlit_vertical_slider as svs
-from streamlit_extras.switch_page_button import switch_page
-from annotated_text import annotated_text, annotation
+
+# from st_pages import Page, show_pages, add_page_title, Section
+# from streamlit_extras.tags import tagger_component
+# import streamlit_vertical_slider as svs
+# from streamlit_extras.switch_page_button import switch_page
+# from annotated_text import annotated_text, annotation
 
 # def example_one():
 
@@ -28,7 +30,19 @@ st.set_page_config(
 )
 
 if 'display_question' not in st.session_state:
-    st.session_state.display_question = ['Dominated Strategies']
+    st.session_state.display_question = 'Dominated Strategies'
+
+if 'cascade_clicked' not in st.session_state:
+    st.session_state.cascade_clicked = False
+
+if 'tree_clicked' not in st.session_state:
+    st.session_state.tree_clicked = False
+
+if 'tree_key' not in st.session_state:
+    st.session_state.tree_key = 0
+
+if 'cascade_key' not in st.session_state:
+    st.session_state.cascade_key = 0
 
 def load_pickle(filename):
     df = pd.read_pickle(f'data/{filename}.pkl')
@@ -59,52 +73,85 @@ categories = {
     ]
 }
 
-name2index_tree = {}
 with st.sidebar:
     st.session_state.view = st.radio('Select a View:', ['Hierarchy', 'Curriculum'])
+
+# @st.cache_data
+def gen_hierarchies():
+    st.session_state.name2index = {}
+    st.session_state.cascader_items = []
+    st.session_state.tree_items = []
+    counter = 0
+    for category in categories:
+
+        cascader_group_items = []
+        tree_group_items = []
+
+        cat_index = counter
+        counter += 1
+        for group_name in categories[category]:
+            
+            cascader_task_items = []
+            tree_task_items = []
+
+            group_index = counter
+            counter += 1
+            for name, row in st.session_state.df.groupby('group_name').get_group(group_name).iterrows():
+                
+                cascader_task_items.append(sac.CasItem(row['task_name'].replace("\'S", "\'s")))
+                tree_task_items.append(sac.TreeItem(row['task_name']))
+
+                task_index = counter
+                st.session_state.name2index[row['task_name']] = [cat_index, group_index, task_index]
+                counter += 1
+            
+            cascader_group_items.append(sac.CasItem(group_name, children = cascader_task_items))
+            tree_group_items.append(sac.TreeItem(group_name, children=tree_task_items, disabled=True))
+            
+        st.session_state.cascader_items.append(sac.CasItem(category, children = cascader_group_items))
+        st.session_state.tree_items.append(sac.TreeItem(category, children = tree_group_items, disabled=True))
+        # print('init', st.session_state.name2index)
+
+def cascade_callback():
+    # print(st.session_state.cascade_key)
+    # print(st.session_state)
+    st.session_state.display_question = st.session_state[st.session_state.cascade_key][-1]
+    # if 'tree_value' in st.session_state['_components_callbacks']:
+    #     del st.session_state['_components_callbacks'].tree_value
+    st.session_state.cascade_clicked = True
+
+def tree_callback():
+    # print(st.session_state.tree_key)
+    st.session_state.display_question = st.session_state[st.session_state.tree_key][-1]
+    # if 'cascade_value' in st.session_state['_components_callbacks']:
+    #     del st.session_state['_components_callbacks'].cascade_value
+    st.session_state.tree_clicked = True
 
 def display_sidebar():
     with st.sidebar:
         placeholder = st.empty()
         if st.session_state.view == 'Hierarchy':
-            tree_items = []
+            tree_index = st.session_state.name2index[st.session_state.display_question]
+            print('tree index', tree_index)
 
-            index = 0
-            for category in categories:
-                sub_category_items = []
-                index += 1
-                for sub_category in categories[category]:
-                    task_items = []
-                    index += 1
-                    for name, row in st.session_state.df.groupby('group_name').get_group(sub_category).iterrows():
-                        task_items.append(sac.TreeItem(row['task_name']))
-                        
-                        name2index_tree[row['task_name']] = [index]
-                        index += 1
+            # if st.session_state.cascade_clicked:
+            #     placeholder.empty()
+            #     print('cascader clicked')
+            #     print(st.session_state)
+            #     st.session_state.cascade_clicked = False
 
-                    sub_category_items.append(sac.TreeItem(sub_category, children=task_items, disabled=True))
-                tree_items.append(sac.TreeItem(category, children = sub_category_items, disabled=True))
-
-            names = list(name2index_tree.keys())
-            for name in st.session_state.display_question:
-                if name in names:
-                    tree_index = name2index_tree[name]
-            
-            with placeholder:
-                sac.tree(
-                    items = tree_items, 
+            # with placeholder:
+            st.session_state.tree_key = str(uuid.uuid4())
+            sac.tree(
+                    items = st.session_state.tree_items, 
                     label = '**Task Hierarchy:**', 
-                    # index = tree_index, 
+                    index = tree_index[-1], 
                     format_func = 'title',
-                    key='first')
-                
-            placeholder.empty()
-            st.session_state.display_question = sac.tree(
-                    items = tree_items, 
-                    label = '**Task Hierarchy:**', 
-                    index = tree_index, 
-                    format_func = 'title',
-                    key='second')
+                    key=st.session_state.tree_key,
+                    on_change=tree_callback,
+                    # return_index = True
+            )
+            # print('return val', val)
 
         
         elif st.session_state.view == 'Curriculum':
@@ -122,50 +169,16 @@ def display_questions(row):
             html = f"""<span style="color: #F9EA9A;font-size:100%">**Grade {diff} Example Question:**</span>  \n{question}"""
             question_grid.markdown(html, unsafe_allow_html=True)
 
-def display_callback():
-    print(st.session_state.cascade_value)
 
 def display_explorer():
-    placeholder = st.empty()
+    # placeholder = st.empty()
 
-    counter = 0
-    for category in categories:
-        group_items = []
-        cat_index = counter
-        counter += 1
-        for group_name in categories[category]:
-            task_items = []
-            group_index = counter
-            counter += 1
-            for name, row in st.session_state.df.groupby('group_name').get_group(group_name).iterrows():
-                task_items.append(sac.CasItem(row['task_name'].replace("'S", "\'s")))
-                task_index = counter
-                name2index_cascade[row['task_name']] = [cat_index, group_index, task_index]
-                counter += 1
-            group_items.append(sac.CasItem(group_name, children = task_items))
-            
-        cascader_items.append(sac.CasItem(category, children = group_items))
+    cascade_index = st.session_state.name2index[st.session_state.display_question]
+    print('cascade index', cascade_index)
 
-    names = list(name2index_cascade.keys())
-    for name in st.session_state.display_question:
-        if name in names:
-            cascade_index = name2index_cascade[name]
-
-    # with placeholder:
-
-    #     st.session_state.display_question = sac.cascader(
-    #         items=cascader_items, 
-    #         label='**Choose a Task:**', 
-    #         # index=casecade_index,#name2index_cascade[st.session_state.display_question[-1]],
-    #         # index=[25, 26, 27], 
-    #         format_func='title', 
-    #         placeholder='Type or Click to Select', 
-    #         search=True, 
-    #         clear=True)
-        
-    # placeholder.empty()
-    st.session_state.display_question = sac.cascader(
-            items=cascader_items, 
+    st.session_state.cascade_key = str(uuid.uuid4())
+    sac.cascader(
+            items=st.session_state.cascader_items, 
             label='**Choose a Task:**', 
             index=cascade_index,#name2index_cascade[st.session_state.display_question[-1]],
             # index=[25, 26, 27], 
@@ -173,14 +186,15 @@ def display_explorer():
             placeholder='Type or Click to Select', 
             search=True, 
             clear=True,
-            key='cascade_value',
-            on_change=display_callback)
+            key=st.session_state.cascade_key,
+            on_change=cascade_callback)
 
 name2index_cascade = {}
 
 if st.session_state.view == 'Hierarchy':
-    cascader_items = []
-    
+    # cascader_items = []
+    if ['name2index'] not in st.session_state:
+        gen_hierarchies()
     display_explorer()
     display_sidebar()
     
