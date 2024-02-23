@@ -7,3 +7,4 @@ st_pages
 streamlit_antd_components
 seaborn
 altair
+pyvis
