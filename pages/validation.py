@@ -27,10 +27,10 @@ st.set_page_config(
 
 st.sidebar.title("Toolbar")
 # Get all files in the validate directory as values and the prettification as keys
-tasks = {' '.join([elm.capitalize() for elm in task.replace('.pkl', '').split('_')]): task for task in os.listdir('data/validate')}
+tasks = {' '.join([elm.capitalize() for elm in task.replace('.pkl', '').split('_')]): task for task in os.listdir('data/validate') if '.DS' not in task}
 selected_task = st.sidebar.selectbox("Select a Task", tasks.keys())
 
-@st.cache_data
+# @st.cache_data
 def load_df(task_name):
     return pd.read_pickle(f'data/validate/{tasks[task_name]}')
 
@@ -39,6 +39,9 @@ for task in tasks:
         st.session_state[f'{task}_df'] = load_df(task)
 
 
+
+# clean data
+st.session_state[f'{selected_task}_df']['difficulty_level'] = pd.to_numeric(st.session_state[f'{selected_task}_df']['difficulty_level'])
 
 # Domain Selection
 domains = st.session_state[f'{selected_task}_df']['domain'].unique()
