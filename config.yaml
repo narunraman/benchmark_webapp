@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    narunram:
+      email: narunram@cs.ubc.ca
+      name: Narun Raman
+      password: $2b$12$6twjRQMRIMnEJ2Q3E/kR2OW6GFuy4.EnC/S5SnPc9ARIObco.apqe # To be replaced with hashed password
+      client_name: Azure
+      api_key: 4e1861dc55a34ed1b1b25149eea3105c
+      endpoint: https://gpt-4-rationality-001.openai.azure.com/
+cookie:
+  expiry_days: 0
+  key: random_signature_key # Must be string
+  name: random_cookie_name
+preauthorized:
+  emails:
+  - tlundy@cs.ubc.ca
+  - kevinlb@cs.ubc.ca

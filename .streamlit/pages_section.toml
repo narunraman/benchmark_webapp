@@ -1,0 +1,18 @@
+[[pages]]
+path = "benchmark_webapp/main.py"
+name = "STEER Benchmark"
+icon = ":clipboard:"
+
+
+[[pages]]
+name = "Developer Tools"
+icon = ":pig:"
+is_section = true
+
+[[pages]]
+path = "benchmark_webapp/pages/Generation.py"
+name = "Generation"
+
+[[pages]]
+path = "benchmark_webapp/pages/Playground.py"
+name = "Playground"
