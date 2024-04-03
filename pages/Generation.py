@@ -21,10 +21,6 @@ authenticator = stauth.Authenticate(
     config['preauthorized']
 )
 
-
-AZURE_OPENAI_KEY = '4e1861dc55a34ed1b1b25149eea3105c'
-AZURE_OPENAI_ENDPOINT = 'https://gpt-4-rationality-001.openai.azure.com/'
-
 azure_token = None
 if 'temperature' not in st.session_state:
     st.session_state.temperature = 0.85
