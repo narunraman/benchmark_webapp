@@ -30,9 +30,18 @@ def main():
     """, unsafe_allow_html=True)
     button_cols = st.columns([0.15, 0.15, 0.7])
     if button_cols[0].button('Paper'):
-        webbrowser.open_new_tab('https://arxiv.org/abs/2402.09552')
+        st.markdown("""
+        <script>
+            window.location.href = "https://arxiv.org/abs/2402.09552";
+        </script>
+        """, unsafe_allow_html=True)
+
     if button_cols[1].button('Github'):
-        webbrowser.open_new_tab('https://github.com/narunraman/STEER')
+        st.markdown("""
+        <script>
+            window.location.href = "https://github.com/narunraman/STEER";
+        </script>
+        """, unsafe_allow_html=True)
     # st.button('Paper')#, 'https://arxiv.org/abs/2402.09552')
     # st.button('Github')#, 'https://github.com/narunraman/STEER')
     st.divider()
